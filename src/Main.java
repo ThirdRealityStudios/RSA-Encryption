@@ -14,7 +14,7 @@ public class Main
         RSATuple rsa = new RSATuple(true);
         RSAEncryption encryption = new RSAEncryption();
 
-        BigInteger symbol = BigInteger.valueOf('L');
+        BigInteger symbol = BigInteger.valueOf(515);
 
         BigInteger encrypted = encryption.encrypt(symbol, rsa.getPublicKey());
         System.out.println("Encrypted '" + symbol + "' to '" + encrypted + "'");
