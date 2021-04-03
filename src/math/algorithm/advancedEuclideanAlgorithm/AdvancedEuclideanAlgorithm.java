@@ -2,6 +2,7 @@ package math.algorithm.advancedEuclideanAlgorithm;
 
 import sun.awt.image.ImageWatched;
 
+import java.math.BigInteger;
 import java.util.LinkedList;
 
 public class AdvancedEuclideanAlgorithm
@@ -9,18 +10,19 @@ public class AdvancedEuclideanAlgorithm
     private TempResult calculateForward(TempResult source)
     {
         // Make sure e / m and e mod m is always calculated before.
-        source.emDivided = source.e / source.m;
-        source.emRemainer = source.e % source.m;
+        source.emDivided = source.e.divide(source.m);
+        source.emRemainer = source.e.mod(source.m);
 
         // After that return the next temporary result (except for a and b which cannot be calculated yet).
         TempResult result = new TempResult(source.m, source.emRemainer);
-        result.emDivided = source.m / source.emRemainer;
-        result.emRemainer = source.m % source.emRemainer;
+
+        result.emDivided = source.m.divide(source.emRemainer);
+        result.emRemainer = source.m.mod(source.emRemainer);
 
         return result;
     }
 
-    private LinkedList<TempResult> calculateForward(long e, long m)
+    private LinkedList<TempResult> calculateForward(BigInteger e, BigInteger m)
     {
         LinkedList<TempResult> results = new LinkedList<TempResult>();
 
@@ -34,36 +36,36 @@ public class AdvancedEuclideanAlgorithm
 
             current = calculateForward(current);
         }
-        while(current.emRemainer > 0);
+        while(current.emRemainer.compareTo(BigInteger.ZERO) > 0);
 
         results.push(current);
 
         return results;
     }
 
-    private long calculateBackward(LinkedList<TempResult> forwardedResults)
+    private BigInteger calculateBackward(LinkedList<TempResult> forwardedResults)
     {
         TempResult previous = forwardedResults.pop();
-        previous.a = 0L;
-        previous.b = 1L;
+        previous.a = BigInteger.ZERO;
+        previous.b = BigInteger.ONE;
 
-        long m = forwardedResults.getLast().m;
+        BigInteger m = forwardedResults.getLast().m;
 
         while(forwardedResults.size() > 0)
         {
             TempResult current = forwardedResults.pop();
 
             current.a = previous.b;
-            current.b = previous.a - (current.emDivided * previous.b);
+            current.b = previous.a.subtract(current.emDivided.multiply(previous.b));
 
             previous = current;
         }
 
-        return previous.a <= 0 ? (previous.a + m) : previous.a;
+        return previous.a.compareTo(BigInteger.ZERO) <= 0 ? (previous.a.add(m)) : previous.a;
     }
 
     // This is the RSA-related method which will return the value d.
-    public long calculate_d(long e, long m)
+    public BigInteger calculate_d(BigInteger e, BigInteger m)
     {
         return calculateBackward(calculateForward(e, m));
     }

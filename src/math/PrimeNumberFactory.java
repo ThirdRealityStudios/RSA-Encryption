@@ -1,21 +1,23 @@
 package math;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class PrimeNumberFactory
 {
-    public boolean isPrimeNumber(long number)
+    public boolean isPrimeNumber(BigInteger number)
     {
-        if(number <= 1)
+        if(number.compareTo(BigInteger.ONE) < 0 || number.equals(BigInteger.ONE))
         {
             return false;
         }
 
         boolean isPrimeNumber = true;
 
-        for(long i = 2; i < number; i++)
+        for(BigInteger i = BigInteger.valueOf(2); i.compareTo(number) < 0; i = i.add(BigInteger.ONE))
         {
-            if((number % i) == 0)
+            if(number.mod(i).equals(BigInteger.ZERO))
             {
                 isPrimeNumber = false;
             }
@@ -24,71 +26,73 @@ public class PrimeNumberFactory
         return isPrimeNumber;
     }
 
-    public long getPrimeNumber(long index)
+    public BigInteger getPrimeNumber(BigInteger index)
     {
-        index++;
+        index = index.add(BigInteger.ONE);
 
-        long primeNumberCounter = 0L;
+        BigInteger primeNumberCounter = BigInteger.ZERO;
 
-        long number = 2L;
+        BigInteger number = BigInteger.valueOf(2L);
 
         while(true)
         {
             if(isPrimeNumber(number))
             {
-                primeNumberCounter++;
+                primeNumberCounter = primeNumberCounter.add(BigInteger.ONE);
 
-                if(primeNumberCounter == index)
+                if(primeNumberCounter.equals(index))
                 {
                     return number;
                 }
             }
 
-            number++;
+            number = number.add(BigInteger.ONE);
         }
     }
 
-    public long randPrimeNumber(long max)
+    public BigInteger randPrimeNumber(int bitLength)
     {
-        long randomIndex = (long) (Math.random() * max);
+        BigInteger rand = BigInteger.probablePrime(bitLength, new Random((long) (Math.random() * Long.MAX_VALUE)));
 
-        return getPrimeNumber(randomIndex);
+
+
+        return rand;
     }
 
-    private long mul(ArrayList<Long> factors)
+    private BigInteger mul(ArrayList<BigInteger> factors)
     {
-        long product = 1L;
+        BigInteger product = BigInteger.ONE;
 
-        for(long l : factors)
+        for(BigInteger bI : factors)
         {
-            product *= l;
+            product = product.multiply(bI);
         }
 
         return product;
     }
 
     // This will factorize the value of 'm' so it is made up of prime numbers only or by itself (see online for "prime factorization").
-    public ArrayList<Long> factorize(long m, boolean ignoreDoubleFactors)
+    public ArrayList<BigInteger> factorize(BigInteger m, boolean ignoreDoubleFactors)
     {
-        ArrayList<Long> factors = new ArrayList<>();
+        ArrayList<BigInteger> factors = new ArrayList<>();
 
-        long factorMatch = 0L;
+        BigInteger factorMatch = BigInteger.ZERO;
 
-        int primeNumberIndex = 0;
+        BigInteger primeNumberIndex = BigInteger.ZERO;
 
-        while(factorMatch != m)
+        while(!factorMatch.equals(m))
         {
-            long primeNumber = getPrimeNumber(primeNumberIndex);
+            BigInteger primeNumber = getPrimeNumber(primeNumberIndex);
 
-            factorMatch = mul(factors) * primeNumber;
+            factorMatch = mul(factors).multiply(primeNumber);
 
-            long mod = m % factorMatch;
+            BigInteger mod = m.mod(factorMatch);
 
-            if(factorMatch > m)
+            if(factorMatch.compareTo(m) > 0)
             {
                 factors.clear();
 
-                if(m > 1)
+                if(m.compareTo(BigInteger.ONE) > 0)
                 {
                     factors.add(m);
                 }
@@ -96,9 +100,9 @@ public class PrimeNumberFactory
                 return factors;
             }
 
-            if((mod > 0))
+            if((mod.compareTo(BigInteger.ZERO) > 0))
             {
-                primeNumberIndex++;
+                primeNumberIndex = primeNumberIndex.add(BigInteger.ONE);
             }
             else
             {
@@ -106,15 +110,15 @@ public class PrimeNumberFactory
             }
         }
 
-        ArrayList<Long> factorsNoDoubles = new ArrayList<Long>();
+        ArrayList<BigInteger> factorsNoDoubles = new ArrayList<BigInteger>();
 
         if(ignoreDoubleFactors)
         {
-            for(long l : factors)
+            for(BigInteger bI : factors)
             {
-                if(!factorsNoDoubles.contains(l))
+                if(!factorsNoDoubles.contains(bI))
                 {
-                    factorsNoDoubles.add(l);
+                    factorsNoDoubles.add(bI);
                 }
             }
 
@@ -124,11 +128,11 @@ public class PrimeNumberFactory
         return factors;
     }
 
-    public long lookupPrimeNumber(ArrayList<Long> exceptions, long max)
+    public BigInteger lookupPrimeNumber(ArrayList<BigInteger> exceptions, BigInteger max)
     {
-        for(long i = 0; i < max; i++)
+        for(BigInteger i = BigInteger.ZERO; i.compareTo(max) < 0; i = i.add(BigInteger.ONE))
         {
-            long primeNumber = getPrimeNumber(i);
+            BigInteger primeNumber = getPrimeNumber(i);
 
             if(!exceptions.contains(primeNumber))
             {
@@ -137,6 +141,6 @@ public class PrimeNumberFactory
         }
 
         // Will never happen but Java requires this..
-        return 0L;
+        return BigInteger.ZERO;
     }
 }

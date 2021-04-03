@@ -8,13 +8,10 @@ import java.util.ArrayList;
 
 public class RSATuple
 {
-    // Only keeps a system-relative range for the lookup of random prime numbers for p and q (will not strengthen the security!).
-    private long range;
-
     // Two prime numbers chosen randomly.
-    private long p, q;
+    private BigInteger p, q;
 
-    private long m, n;
+    private BigInteger n, m;
 
     private PublicKey publicKey;
     private PrivateKey privateKey;
@@ -22,17 +19,18 @@ public class RSATuple
     private PrimeNumberFactory pNF;
     private AdvancedEuclideanAlgorithm aEA;
 
+    private int bitLength;
+
     private boolean debug;
 
-    public RSATuple(boolean debug)
+    public RSATuple(int bitLength, boolean debug)
     {
+        this.bitLength = bitLength;
+
         this.debug = debug;
 
         pNF = new PrimeNumberFactory();
         aEA = new AdvancedEuclideanAlgorithm();
-
-        // Just creates a system-relative range for the lookup of random prime numbers for p and q (will not strengthen the security!).
-        range = Integer.MAX_VALUE / (Short.MAX_VALUE * 16);
 
         renew();
     }
@@ -51,21 +49,30 @@ public class RSATuple
     // Can be used to establish a secure connection.
     public void renew()
     {
-        //p = pNF.randPrimeNumber(range);
-        //q = pNF.randPrimeNumber(range);
+        p = pNF.randPrimeNumber(bitLength);
+        q = pNF.randPrimeNumber(bitLength);
 
-        p = 11;
-        q = 47;
+        n = p.multiply(q);
+        m = p.subtract(BigInteger.valueOf(1L)).multiply(q.subtract(BigInteger.valueOf(1)));
 
-        n = p * q;
-        m = (p - 1) * (q - 1);
+        if(debug)
+            System.out.println("[RSATuple]: Starting prime factorization (exceptions)..");
 
-        ArrayList<Long> exceptions = pNF.factorize(m, true);
+        ArrayList<BigInteger> exceptions = pNF.factorize(m, true);
+
+        if(debug)
+            System.out.println("[RSATuple]: Starting lookup for a random prime number (e)..");
 
         // 'e' must be a prime number, must be below m and may not be an element of any prime factors.
-        long e = pNF.lookupPrimeNumber(exceptions, m);
+        BigInteger e = pNF.lookupPrimeNumber(exceptions, m);
 
-        long d = aEA.calculate_d(e, m);
+        if(debug)
+            System.out.println("[RSATuple]: Starting calculation (d)..");
+
+        BigInteger d = aEA.calculate_d(e, m);
+
+        if(debug)
+            System.out.println("[RSATuple]: Starting creation of keys..");
 
         publicKey = new PublicKey(n, e);
         privateKey = new PrivateKey(n, d);

@@ -9,12 +9,12 @@ public class Main
 {
     public static void main(String[] args)
     {
-        AdvancedEuclideanAlgorithm aEA = new AdvancedEuclideanAlgorithm();
-
-        RSATuple rsa = new RSATuple(true);
+        RSATuple rsa = new RSATuple(12, true);
         RSAEncryption encryption = new RSAEncryption();
 
-        BigInteger symbol = BigInteger.valueOf(515);
+        BigInteger symbol = BigInteger.valueOf(515L);
+
+        System.out.println("Starting encryption..");
 
         BigInteger encrypted = encryption.encrypt(symbol, rsa.getPublicKey());
         System.out.println("Encrypted '" + symbol + "' to '" + encrypted + "'");

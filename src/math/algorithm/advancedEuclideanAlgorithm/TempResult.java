@@ -1,11 +1,13 @@
 package math.algorithm.advancedEuclideanAlgorithm;
 
+import java.math.BigInteger;
+
 public class TempResult
 {
-    public long e, m, emDivided, emRemainer;
-    public Long a, b;
+    public BigInteger e, m, emDivided, emRemainer;
+    public BigInteger a, b;
 
-    public TempResult(long e, long m)
+    public TempResult(BigInteger e, BigInteger m)
     {
         this.e = e;
         this.m = m;

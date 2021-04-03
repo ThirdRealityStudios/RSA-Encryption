@@ -4,9 +4,9 @@ import java.math.BigInteger;
 
 public class PrivateKey
 {
-    public long n, d;
+    public BigInteger n, d;
 
-    public PrivateKey(long n, long d)
+    public PrivateKey(BigInteger n, BigInteger d)
     {
         this.n = n;
         this.d = d;
