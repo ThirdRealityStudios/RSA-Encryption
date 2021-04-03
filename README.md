@@ -1,8 +1,10 @@
 # RSA encryption algorithm (Java)
 
-This is an example of a simple implementation of the RSA encryption.
+**This is a simple example of an implementation for the RSA encryption and decryption.**
 
-Note that this example does not make use of square and multiply or similar exponential algorithm to
-prevent overflows.
-Instead I just implemented the internal Java class BigInteger which allows you to provide values (cleartext symbol) up
-to ~515 (at least on my system) without failure.
+It is fully working but beware of long calculation times as it uses only simple algorithms for calculating and retrieving prime numbers.
+
+Saving prime numbers on your hard-disk or simply connecting the RSA algorithm to a database (with billions of pre-defined prime numbers) would definitively accelerate the progress.
+
+Also note that this example does not make use of square and multiply in order to prevent overflows while encrypting.
+This implementation just makes use of the Java internal class BigInteger.
